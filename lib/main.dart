@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tak_toe/home.dart';
+import 'package:tic_tak_toe/info_screen.dart';
+import 'package:tic_tak_toe/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,12 +14,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Home(),
+      home: const SplashScreen(),
     );
   }
 }
