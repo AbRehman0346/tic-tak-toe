@@ -25,6 +25,7 @@ class _HomeState extends State<Home> {
 
   bool skullTurn = true;
   List<bool?> placeSkull = List.generate(9, (index) => null);
+  List<bool> winPattern = List.generate(8, (index) => false);
   double imageHeight = 70;
   double imageWidth = 70;
   bool visibleControls = false;
@@ -34,14 +35,10 @@ class _HomeState extends State<Home> {
     double boardWidth = 250;
     double boardHeight = 300;
 
-    // temperiory switches
-    // visibleControls = true;
-
 
 
     return Scaffold(
       backgroundColor: const Color.fromRGBO(253, 253, 253, 1),
-      // appBar: AppBar(title: Text("Tic Tac Toe")),
       body: SafeArea(
         child: SizedBox(
           width: MediaQuery.of(context).size.width,
@@ -61,6 +58,7 @@ class _HomeState extends State<Home> {
                 ],
               ),
 
+              // For Space
               const SizedBox(height: 100),
 
               // board of the game.
@@ -83,8 +81,6 @@ class _HomeState extends State<Home> {
                                 Box(index: 0),
                                 Box(index: 1),
                                 Box(index: 2),
-                                // Image.asset(ProjectPaths.skull, width: imageWidth, height: imageHeight),
-                                // Image.asset(ProjectPaths.skull, width: imageWidth, height: imageHeight),
                               ],
                             ),
                             Row(
@@ -108,23 +104,33 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     // Board Lines
-                    horizontalLine(topSpace: 82.5, leftSpace: 0,  boardWidth: boardWidth),
-                    horizontalLine(topSpace: 165, leftSpace: 0, boardWidth: boardWidth),
-                    verticalLine(topSpace: 0, leftSpace: 82.5, boardHeight: boardHeight),
-                    verticalLine(topSpace: 0, leftSpace: 165, boardHeight: boardHeight),
+                    horizontalLine(topSpace: 82.5, leftSpace: 0,  lineStrach: boardWidth),
+                    horizontalLine(topSpace: 165, leftSpace: 0, lineStrach: boardWidth),
+                    verticalLine(topSpace: 0, leftSpace: 82.5, lineStreatch: boardHeight),
+                    verticalLine(topSpace: 0, leftSpace: 165, lineStreatch: boardHeight),
 
                   //   Winning Lines
-                    horizontalLine(topSpace: 50, leftSpace: 0, width: 5, color: Colors.blue, ),
-                    horizontalLine(topSpace: 170, leftSpace: 0, width: 5, color: Colors.blue),
-                    horizontalLine(topSpace: 275, leftSpace: 0, width: 5, color: Colors.blue),
+                    horizontalLine(visible: winPattern[0] ,topSpace: 40, leftSpace: 0, width: 5, lineStrach: boardWidth, color: Colors.blue, ),
+                    horizontalLine(visible: winPattern[1] ,topSpace: 125, leftSpace: 0, width: 5,lineStrach: boardWidth, color: Colors.blue),
+                    horizontalLine(visible: winPattern[2] ,topSpace: 208, leftSpace: 0, width: 5,lineStrach: boardWidth, color: Colors.blue),
 
-                    verticalLine(leftSpace: 35, topSpace: 0, width: 5, color: Colors.blue),
-                    verticalLine(leftSpace: 107, topSpace: 0, width: 5, color: Colors.blue),
-                    verticalLine(leftSpace: 180, topSpace: 0, width: 5, color: Colors.blue),
+                    verticalLine(visible: winPattern[3] ,leftSpace: 40, topSpace: 0, width: 5, lineStreatch: boardHeight, color: Colors.blue),
+                    verticalLine(visible: winPattern[4] ,leftSpace: 123, topSpace: 0, width: 5, lineStreatch: boardHeight, color: Colors.blue),
+                    verticalLine(visible: winPattern[5] ,leftSpace: 205, topSpace: 0, width: 5, lineStreatch: boardHeight, color: Colors.blue),
+
+                    // Positioned(
+                    //   left: 50,
+                    //   top: 0,
+                    //   child: Container(
+                    //     width: 5,
+                    //     height: boardHeight,
+                    //     color: Colors.blue,
+                    //   ),)
                   ],
                 ),
               ),
 
+              // for space
               const SizedBox(height: 20),
 
               // It's Draw information
@@ -135,7 +141,7 @@ class _HomeState extends State<Home> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
                             color: Colors.black,
                             offset: Offset(-5, 5),
@@ -146,8 +152,8 @@ class _HomeState extends State<Home> {
                       ]
                     ),
                     width: MediaQuery.of(context).size.width * 0.6,
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    child: Center(child: Text("It's a Draw", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),)),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    child: const Center(child: Text("It's a Draw", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),)),
                   ),
                 ),
               ),
@@ -158,6 +164,9 @@ class _HomeState extends State<Home> {
               Visibility(
                 visible: visibleControls,
                 child: GestureDetector(
+                  onTap: (){
+
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.blue,
@@ -185,10 +194,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  // void gameOver(){
-  //
-  // }
-
   Widget Box({required index}){
     return GestureDetector(
       onTap: (){
@@ -198,6 +203,7 @@ class _HomeState extends State<Home> {
             skullTurn = !skullTurn;
           });
         }
+        gameOver();
       },
       child: placeSkull[index] != null ?
       placeSkull[index] == true ?
@@ -221,25 +227,128 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget horizontalLine({required double leftSpace, required double topSpace, double width = 2, Color color=Colors.black, double boardWidth=200}) {
-    return Positioned(
-      left: leftSpace,
-        top: topSpace,
-        child: Container(
-          width: boardWidth,
-          height: width,
-          color: color,
-        ),);
+  Widget horizontalLine({required double leftSpace, required double topSpace, double width = 2, Color color=Colors.black, double lineStrach=200, bool visible = true}) {
+    return Visibility(
+      visible: visible,
+      child: Positioned(
+        left: leftSpace,
+          top: topSpace,
+          child: Container(
+            width: lineStrach,
+            height: width,
+            color: color,
+          ),),
+    );
   }
 
-  Widget verticalLine({required double topSpace, required double leftSpace, double width = 2, Color color=Colors.black, double boardHeight=200}) {
-    return Positioned(
-        left: leftSpace,
-        top: topSpace,
-        child: Container(
-          width: width,
-          height: boardHeight,
-          color: color,
-        ),);
+  Widget verticalLine({required double topSpace, required double leftSpace, double width = 2, Color color=Colors.black, double lineStreatch=200, bool visible=true}) {
+    return Visibility(
+      visible: visible,
+      child: Positioned(
+          left: leftSpace,
+          top: topSpace,
+          child: Container(
+            width: width,
+            height: lineStreatch,
+            color: color,
+          ),),
+    );
+  }
+
+
+  void gameOver(){
+    String skullMsg = "Win::::Skull X won the game";
+    String bombMsg = "Win::::Bomb X won the game";
+    
+    if (
+    ((placeSkull[0] != null)) &&
+        (placeSkull[0] == placeSkull[1]) &&
+        (placeSkull[0] == placeSkull[2])
+    ){
+      winPattern[0] = true;
+      if(placeSkull[0]!){
+        log(skullMsg);
+      }else{
+        log(bombMsg);
+      }
+    }
+
+    else if (
+    ((placeSkull[3] != null)) &&
+        (placeSkull[3] == placeSkull[4]) &&
+        (placeSkull[3] == placeSkull[5])
+    ){
+      winPattern[1] = true;
+      if(placeSkull[3]!){
+        log(skullMsg);
+      }else{
+        log(bombMsg);
+      }
+    }
+
+    else if (
+    ((placeSkull[6] != null)) &&
+        (placeSkull[6] == placeSkull[7]) &&
+        (placeSkull[6] == placeSkull[8])
+    ){
+      winPattern[2] = true;
+      if(placeSkull[6]!){
+        log(skullMsg);
+      }else{
+        log(bombMsg);
+      }
+    }
+
+
+    else if (
+    ((placeSkull[0] != null)) &&
+        (placeSkull[0] == placeSkull[3]) &&
+        (placeSkull[0] == placeSkull[6])
+    ){
+      winPattern[3] = true;
+      if(placeSkull[0]!){
+        log(skullMsg);
+      }else{
+        log(bombMsg);
+      }
+    }
+
+    else if (
+    ((placeSkull[1] != null)) &&
+        (placeSkull[1] == placeSkull[4]) &&
+        (placeSkull[1] == placeSkull[7])
+    ){
+      winPattern[4] = true;
+      if(placeSkull[1]!){
+        log(skullMsg);
+      }else{
+        log(bombMsg);
+      }
+    }
+
+    else if (
+    ((placeSkull[2] != null)) &&
+        (placeSkull[2] == placeSkull[5]) &&
+        (placeSkull[2] == placeSkull[8])
+    ){
+      winPattern[5] = true;
+      if(placeSkull[2]!){
+        log(skullMsg);
+      }else{
+        log(bombMsg);
+      }
+    }
+
+    int countPlaces = 0;
+    for (bool? value in placeSkull){
+      if(value != null){
+        countPlaces++;
+      }
+    }
+    
+    if(countPlaces == 9){
+      setState(() {visibleControls = true;});
+    }
+
   }
 }
